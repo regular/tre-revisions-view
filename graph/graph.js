@@ -3,46 +3,11 @@ const SVGPathData = require('./svg-path-data')
 
 const COLOURS = ["#e11d21", "#fbca04", "#009800", "#006b75", "#207de5", "#0052cc", "#5319e7", "#f7c6c7", "#fad8c7", "#fef2c0", "#bfe5bf", "#c7def8", "#bfdadc", "#bfd4f2", "#d4c5f9", "#cccccc", "#84b6eb", "#e6e6e6", "#ffffff", "#cc317c"];
 
-function classSet() {
-  const classes =  Array.from(arguments)
-  return classes.filter(Boolean).join(' ')
-}
-
-function getColour(branch) {
-  return COLOURS[branch % COLOURS.length]
-}
-
-function getBranchCountFromData(data) {
-  var i, j, maxBranch;
-  maxBranch = -1;
-  i = 0;
-  while (i < data.length) {
-    j = 0;
-    while (j < data[i][2].length) {
-      if (maxBranch < data[i][2][j][0] || maxBranch < data[i][2][j][1]) {
-        maxBranch = Math.max.apply(Math, [data[i][2][j][0], data[i][2][j][1]]);
-      }
-      j++;
-    }
-    i++;
-  }
-  return maxBranch + 1
-}
-
-function distance(point1, point2) {
-  let xs = point2.x - point1.x
-  xs = xs * xs;
-  let ys = point2.y - point1.y
-  ys = ys * ys;
-  return Math.sqrt(xs + ys)
-}
-
 module.exports = function(commits, opts) {
   opts = opts || {}
   let graphData = null
   let branchCount = null
   let selected = null
-  let renderedCommitsPositions = []
 
   const domNode = opts.domNode || (()=> { throw new Error('Specify opts.dokNode') })
 
@@ -56,34 +21,6 @@ module.exports = function(commits, opts) {
   }, opts)
 
   return renderGraph
-
-  /*
-  function cursorPoint(e) {
-    var svg, svgPoint;
-    svg = this.getDOMNode();
-    svgPoint = svg.createSVGPoint();
-    svgPoint.x = e.clientX;
-    svgPoint.y = e.clientY;
-    return svgPoint.matrixTransform(svg.getScreenCTM().inverse());
-  }
-  
-  function handleClick(e) {
-    var closestCommit, commit, commitDistance, cursorLoc, k, len, ref, smallestDistance;
-    cursorLoc = cursorPoint(e);
-    smallestDistance = Math.Infinity
-    closestCommit = null;
-    ref = renderedCommitsPositions;
-    for (k = 0, len = ref.length; k < len; k++) {
-      commit = ref[k];
-      commitDistance = distance(cursorLoc, commit);
-      if (commitDistance < smallestDistance) {
-        smallestDistance = commitDistance;
-        closestCommit = commit;
-      }
-    }
-    onClick(closestCommit.sha)
-  }
-  */
 
   function getGraphData() {
     return graphData || (graphData = generateGraphData(commits))
@@ -201,19 +138,15 @@ module.exports = function(commits, opts) {
     const offset = getOffset()
     const invert = getInvert()
     const x = offset + invert + (dot_offset + 1) * x_step
-    const y = (idx + 0.5) * y_step
+    const y = (idx + 0.5) * y_step 
 
     const commitNode = renderCommitNode(x, y, sha, dot_branch)
     const routeNodes = routes_data.map(route => renderRoute(idx, route) )
     
-    renderedCommitsPositions.push({
-      x, y, sha
-    })
     return [commitNode, routeNodes]
   }
 
   function renderGraph() {
-    renderedCommitsPositions = []
     const allCommitNodes = []
     let allRouteNodes = []
     getGraphData().forEach( (commit, index) => {
@@ -241,5 +174,33 @@ module.exports = function(commits, opts) {
       height, width, style, children
     })
   }
+}
+
+// -- utils
+
+function classSet() {
+  const classes =  Array.from(arguments)
+  return classes.filter(Boolean).join(' ')
+}
+
+function getColour(branch) {
+  return COLOURS[branch % COLOURS.length]
+}
+
+function getBranchCountFromData(data) {
+  var i, j, maxBranch;
+  maxBranch = -1;
+  i = 0;
+  while (i < data.length) {
+    j = 0;
+    while (j < data[i][2].length) {
+      if (maxBranch < data[i][2][j][0] || maxBranch < data[i][2][j][1]) {
+        maxBranch = Math.max.apply(Math, [data[i][2][j][0], data[i][2][j][1]]);
+      }
+      j++;
+    }
+    i++;
+  }
+  return maxBranch + 1
 }
 
