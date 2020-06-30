@@ -1,10 +1,11 @@
 const generateGraphData = require('./generate-graph-data')
 const SVGPathData = require('./svg-path-data')
 
-const COLOURS = ["#e11d21", "#fbca04", "#009800", "#006b75", "#207de5", "#0052cc", "#5319e7", "#f7c6c7", "#fad8c7", "#fef2c0", "#bfe5bf", "#c7def8", "#bfdadc", "#bfd4f2", "#d4c5f9", "#cccccc", "#84b6eb", "#e6e6e6", "#ffffff", "#cc317c"];
+const COLORS = ["#e11d21", "#fbca04", "#009800", "#006b75", "#207de5", "#0052cc", "#5319e7", "#f7c6c7", "#fad8c7", "#fef2c0", "#bfe5bf", "#c7def8", "#bfdadc", "#bfd4f2", "#d4c5f9", "#cccccc", "#84b6eb", "#e6e6e6", "#ffffff", "#cc317c"];
 
 module.exports = function(commits, opts) {
   opts = opts || {}
+  const colors = opts.colors || COLORS
   let graphData = null
   let branchCount = null
   let selected = null
@@ -61,11 +62,11 @@ module.exports = function(commits, opts) {
   }
 
   function renderRouteNode(d, branch) {
-    var classes, colour, style;
+    var classes, color, style;
     if (!state.unstyled) {
-      colour = getColour(branch)
+      color = getColor(branch)
       style = {
-        'stroke': colour,
+        'stroke': color,
         'stroke-width': state.lineWidth,
         'fill': 'none'
       }
@@ -99,21 +100,21 @@ module.exports = function(commits, opts) {
   }
 
   function renderCommitNode(x, y, sha, dot_branch) {
-    var classes, colour, radius, selectedClass, strokeColour, strokeWidth, style;
+    var classes, color, radius, selectedClass, strokeColor, strokeWidth, style;
     radius = state.dotRadius
     if (!state.unstyled) {
-      colour = getColour(dot_branch)
+      color = getColor(dot_branch)
       if (sha === selected) {
-        strokeColour = '#000'
+        strokeColor = '#000'
         strokeWidth = 2
       } else {
-        strokeColour = colour
+        strokeColor = color
         strokeWidth = 1
       }
       style = {
-        'stroke': strokeColour,
+        'stroke': strokeColor,
         'stroke-width': strokeWidth,
-        'fill': colour
+        'fill': color
       }
     }
     if (selected) {
@@ -174,6 +175,10 @@ module.exports = function(commits, opts) {
       height, width, style, children
     })
   }
+
+  function getColor(branch) {
+    return colors[branch % colors.length]
+  }
 }
 
 // -- utils
@@ -183,9 +188,6 @@ function classSet() {
   return classes.filter(Boolean).join(' ')
 }
 
-function getColour(branch) {
-  return COLOURS[branch % COLOURS.length]
-}
 
 function getBranchCountFromData(data) {
   var i, j, maxBranch;

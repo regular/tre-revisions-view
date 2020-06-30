@@ -42,12 +42,12 @@ module.exports = function(ssb, opts) {
       computed(revsObs, kvs => {
         const graph = Graph(kvs.map(kv => {
           return {sha: kv.key, parents: ary(kv.value.content.revisionBranch)}
-        }), {
+        }), Object.assign({
           domNode,
           y_step,
           dotRadius: 5.5,
           lineWidth: 4.5
-        })
+        }, opts))
         const svg = graph().toString()
         const url = svgDataUri(svg)
         return h('img.graph', {
