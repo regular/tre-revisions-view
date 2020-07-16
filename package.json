@@ -1,6 +1,6 @@
 {
   "name": "tre-revisions-view",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Shows revisions of an ssb message",
   "main": "index.js",
   "scripts": {
