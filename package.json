@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/regular/tre-revisions-view#readme",
   "dependencies": {
+    "debug": "^4.1.1",
     "mini-svg-data-uri": "^1.0.2",
     "module-styles": "^1.0.0",
     "mutant": "^3.22.1",

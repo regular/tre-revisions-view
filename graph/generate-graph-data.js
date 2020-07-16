@@ -4,6 +4,7 @@
 Generate preformatted data of commits graph.
  */
 var Node, generateGraphData, remove;
+const debug = require('debug')('tre-revisions-view:graph')
 
 generateGraphData = function(commits) {
   /*
@@ -38,17 +39,17 @@ generateGraphData = function(commits) {
   for (j = 0, len = commits.length; j < len; j++) {
     commit = commits[j];
 
-    console.log('commit', commit)
+    debug('commit %o', commit)
 
     branch = getBranch(commit.sha);
-    console.log('branch', branch)
+    debug('branch %s', branch)
     
     numParents = commit.parents.length;
     offset = reserve.indexOf(branch);
     routes = [];
     if (numParents === 1) {
       if (branches[commit.parents[0]] != null) {
-        console.warn('parent branch exists')
+        debug('parent branch exists')
         ref = reserve.slice(offset + 1);
         for (i = k = 0, len1 = ref.length; k < len1; i = ++k) {
           b = ref[i];
@@ -62,7 +63,7 @@ generateGraphData = function(commits) {
         remove(reserve, branch);
         routes.push([offset, reserve.indexOf(branches[commit.parents[0]]), branch]);
       } else {
-        console.warn('parent branch does not exists')
+        debug('parent branch does not exists')
         for (i = m = 0, len3 = reserve.length; m < len3; i = ++m) {
           b = reserve[i];
           routes.push([i, i, b]);
